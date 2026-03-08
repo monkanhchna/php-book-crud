@@ -1,0 +1,68 @@
+<?php
+include 'db.php';
+
+$sql = "SELECT * FROM books WHERE is_active=0";
+$result = $conn->query($sql);
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List all Books</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+</head>
+
+<body>
+    <h2>List of Books</h2>
+    <button><a href="add.php">Add New Book</a></button>
+    <table id="mytable" border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>ISBN</th>
+                <th>Category</th>
+                <th>Page Number</th>
+                <th>Unit Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php 
+            include 'db.php';
+            $sql = "SELECT * FROM books WHERE is_deleted = 0";
+            $result = $conn-> query($sql);
+            if ($result->num_rows > 0){
+                while ($row = $result->fetch_assoc()){
+                    echo "<tr>";
+                    echo "<td>{$row['book_id']}</td>";
+                    echo "<td>" . $row['title'] . "</td>";
+                    echo "<td>" . $row['isbn'] . "</td>";
+                    echo "<td>" . $row['category'] . "</td>";
+                    echo "<td>" . $row['page_number'] . "</td>";
+                    echo "<td>" . $row['unit_price'] . "</td>";
+                    echo "<td>
+                        <a href='edit.php?id={$row['book_id']}'>Edit</a> |
+                        <a href='delete.php?id={$row['book_id']}' onclock=\"return cofirm('Are you sure you want to delete this book?');\">Delete</a>
+                     </td>";
+                    echo "</tr>";
+                }
+            } else{
+                echo "<tr><td colspan='7'>No records found</td></tr>";
+            } 
+            $conn->close();
+            ?>
+
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        $('#mytable').DataTable();
+    </script>
+    
+</body>
+</html>
